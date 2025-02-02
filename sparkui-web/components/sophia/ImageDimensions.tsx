@@ -22,30 +22,50 @@ export function ImageDimensions() {
     const [height, setHeight] = useState(1024)
     const [aspectRatio, setAspectRatio] = useState('1:1')
     const [swapped, setSwapped] = useState(false)
+    const [inputWidth, setInputWidth] = useState(width.toString())
+    const [inputHeight, setInputHeight] = useState(height.toString())
 
     const updateDimension = (dimension: 'width' | 'height', value: number) => {
         const snappedValue = snapTo8(value)
 
         if (dimension === 'width') {
             setWidth(snappedValue)
+            setInputWidth(snappedValue.toString())
             if (aspectRatio !== 'custom') {
                 const [w, h] = aspectRatio.split(':').map(Number)
-                if (swapped) {
-                    setHeight(snapTo8((snappedValue * w) / h))
-                } else {
-                    setHeight(snapTo8((snappedValue * h) / w))
-                }
+                const newHeight = swapped ? snapTo8((snappedValue * w) / h) : snapTo8((snappedValue * h) / w)
+                setHeight(newHeight)
+                setInputHeight(newHeight.toString())
             }
         } else {
             setHeight(snappedValue)
+            setInputHeight(snappedValue.toString())
             if (aspectRatio !== 'custom') {
                 const [w, h] = aspectRatio.split(':').map(Number)
-                if (swapped) {
-                    setWidth(snapTo8((snappedValue * h) / w))
-                } else {
-                    setWidth(snapTo8((snappedValue * w) / h))
-                }
+                const newWidth = swapped ? snapTo8((snappedValue * h) / w) : snapTo8((snappedValue * w) / h)
+                setWidth(newWidth)
+                setInputWidth(newWidth.toString())
             }
+        }
+    }
+
+    const handleInputChange = (dimension: 'width' | 'height', value: string) => {
+        if (dimension === 'width') {
+            setInputWidth(value)
+        } else {
+            setInputHeight(value)
+        }
+    }
+
+    const handleInputBlur = (dimension: 'width' | 'height') => {
+        const value = dimension === 'width' ? inputWidth : inputHeight
+        const numValue = Number.parseInt(value) || 8
+        updateDimension(dimension, numValue)
+    }
+
+    const handleInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, dimension: 'width' | 'height') => {
+        if (e.key === 'Enter') {
+            handleInputBlur(dimension)
         }
     }
 
@@ -53,11 +73,9 @@ export function ImageDimensions() {
         setAspectRatio(newRatio)
         if (newRatio !== 'custom') {
             const [w, h] = newRatio.split(':').map(Number)
-            if (swapped) {
-                setHeight(snapTo8((width * w) / h))
-            } else {
-                setHeight(snapTo8((width * h) / w))
-            }
+            const newHeight = swapped ? snapTo8((width * w) / h) : snapTo8((width * h) / w)
+            setHeight(newHeight)
+            setInputHeight(newHeight.toString())
         }
     }
 
@@ -65,17 +83,17 @@ export function ImageDimensions() {
         const tempWidth = width
         setWidth(height)
         setHeight(tempWidth)
+        setInputWidth(height.toString())
+        setInputHeight(tempWidth.toString())
         setSwapped(!swapped)
     }
 
     useEffect(() => {
         if (aspectRatio !== 'custom') {
             const [w, h] = aspectRatio.split(':').map(Number)
-            if (swapped) {
-                setHeight(snapTo8((width * w) / h))
-            } else {
-                setHeight(snapTo8((width * h) / w))
-            }
+            const newHeight = swapped ? snapTo8((width * w) / h) : snapTo8((width * h) / w)
+            setHeight(newHeight)
+            setInputHeight(newHeight.toString())
         }
     }, [aspectRatio, width, swapped])
 
@@ -99,8 +117,8 @@ export function ImageDimensions() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Button className='w-12 h-8 p-0' onClick={handleSwap} title='Swap dimensions'>
-                            <ArrowRightLeftIcon />
+                        <Button className='w-8 h-8 p-0' onClick={handleSwap} title='Swap dimensions'>
+                            <ArrowRightLeftIcon className='w-4 h-4' />
                         </Button>
                     </div>
                 </div>
@@ -121,9 +139,10 @@ export function ImageDimensions() {
                             type='number'
                             min={8}
                             max={4096}
-                            step={8}
-                            value={width}
-                            onChange={(e) => updateDimension('width', Number.parseInt(e.target.value) || 8)}
+                            value={inputWidth}
+                            onChange={(e) => handleInputChange('width', e.target.value)}
+                            onBlur={() => handleInputBlur('width')}
+                            onKeyDown={(e) => handleInputKeyDown(e, 'width')}
                             className='w-20'
                         />
                     </div>
@@ -145,9 +164,10 @@ export function ImageDimensions() {
                             type='number'
                             min={8}
                             max={4096}
-                            step={8}
-                            value={height}
-                            onChange={(e) => updateDimension('height', Number.parseInt(e.target.value) || 8)}
+                            value={inputHeight}
+                            onChange={(e) => handleInputChange('height', e.target.value)}
+                            onBlur={() => handleInputBlur('height')}
+                            onKeyDown={(e) => handleInputKeyDown(e, 'height')}
                             className='w-20'
                         />
                     </div>

@@ -239,9 +239,9 @@ export default function PageTxt2Img() {
 
                         <hr className='my-2' />
 
-                        <div className='grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-center'>
+                        <div className='grid grid-cols-[auto_5fr_4fr_auto] gap-2 items-center'>
                             <Label htmlFor='seed'>Seed</Label>
-                            <Input id='seed' type='number' className='text-center' min={0} max={100} defaultValue={42} />
+                            <Input id='seed' type='number' className='text-center' min={0} defaultValue={42} />
                             <Button>
                                 <ShuffleIcon />
                                 Shuffle Seed
@@ -252,7 +252,7 @@ export default function PageTxt2Img() {
                             </div>
 
                             <Label htmlFor='subSeed'>Sub Seed</Label>
-                            <Input id='subSeed' type='number' className='text-center' min={0} max={100} defaultValue={42} />
+                            <Input id='subSeed' type='number' className='text-center' min={0} defaultValue={7} />
                             <Button>
                                 <ShuffleIcon /> Shuffle Seed
                             </Button>
