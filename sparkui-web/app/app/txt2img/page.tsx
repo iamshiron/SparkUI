@@ -6,18 +6,18 @@ import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/componen
 import { Button } from '@/components/ui/button'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 import { Input } from '@/components/ui/input'
-import { Select } from '@/components/ui/select'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
 import { Progress } from '@/components/ui/progress'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Switch } from '@/components/ui/switch'
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { Textarea } from '@/components/ui/textarea'
 
-import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon } from 'lucide-react'
-import { Separator } from '@radix-ui/react-separator'
+import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon, ShuffleIcon } from 'lucide-react'
 
 interface GroupContainerProps {
     title: string
@@ -86,6 +86,8 @@ const ConceptItem: React.FC<ConceptItemProps> = ({ name, thumbnail, weight }) =>
         </div>
     )
 }
+
+const SCHEDULERS = ['Euler A', 'DPM++ 2M', 'DPM++ 2M Karras', 'DPM++ 2M Exponential']
 
 export default function PageTxt2Img() {
     return (
@@ -205,7 +207,47 @@ export default function PageTxt2Img() {
                         </div>
                     </GroupContainer>
                     <GroupContainer title='Base Settings'>
-                        <p>Base Settings</p>
+                        <div className='flex space-x-2'>
+                            <Input type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
+                            <Input type='number' className='text-center' min={1} max={100} defaultValue={20} step={1} />
+                            <Select>
+                                <SelectTrigger className='flex-grow'>
+                                    <SelectValue placeholder='Scheduler' defaultValue={SCHEDULERS[0]} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {SCHEDULERS.map((scheduler, i) => (
+                                        <SelectItem key={i} value={scheduler}>
+                                            {scheduler}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+
+                        <hr className='my-2' />
+
+                        <div className='grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-center'>
+                            <Label htmlFor='seed'>Seed</Label>
+                            <Input id='seed' type='number' className='pr-0 text-right' min={0} max={100} defaultValue={42} />
+                            <Button>
+                                <ShuffleIcon />
+                                Shuffle Seed
+                            </Button>
+                            <div className='flex justify-around space-x-2 items-center w-full'>
+                                <Switch id='lockSeed' />
+                                <Label htmlFor='lockSeed'>Lock</Label>
+                            </div>
+
+                            <Label htmlFor='subSeed'>Sub Seed</Label>
+                            <Input id='subSeed' type='number' className='pr-0 text-right' min={0} max={100} defaultValue={42} />
+                            <Button>
+                                <ShuffleIcon /> Shuffle Seed
+                            </Button>
+                            <div className='flex justify-around space-x-2 items-center w-full'>
+                                <Switch id='lockSubSeed' />
+                                <Label htmlFor='lockSubSeed'>Lock</Label>
+                            </div>
+                        </div>
                     </GroupContainer>
                 </div>
             </div>
