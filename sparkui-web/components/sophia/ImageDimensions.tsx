@@ -117,8 +117,8 @@ export function ImageDimensions() {
                                 ))}
                             </SelectContent>
                         </Select>
-                        <Button className='w-8 h-8 p-0' onClick={handleSwap} title='Swap dimensions'>
-                            <ArrowRightLeftIcon className='w-4 h-4' />
+                        <Button className='w-12 h-8 p-0' onClick={handleSwap} title='Swap dimensions'>
+                            <ArrowRightLeftIcon />
                         </Button>
                     </div>
                 </div>
