@@ -11,17 +11,19 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Slider } from '@/components/ui/slider'
 import { Progress } from '@/components/ui/progress'
 import { Label } from '@/components/ui/label'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { Textarea } from '@/components/ui/textarea'
 
-import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon } from 'lucide-react'
+import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon } from 'lucide-react'
+import { Separator } from '@radix-ui/react-separator'
 
-interface ImageSettingsGroupProps {
+interface GroupContainerProps {
     title: string
     children: React.ReactNode
 }
-const ImageSettingsGroup: React.FC<ImageSettingsGroupProps> = ({ title, children }: ImageSettingsGroupProps) => {
+const GroupContainer: React.FC<GroupContainerProps> = ({ title, children }: GroupContainerProps) => {
     const [isExpanded, setIsExpanded] = useState(true)
 
     return (
@@ -44,6 +46,42 @@ const ImageSettingsGroup: React.FC<ImageSettingsGroupProps> = ({ title, children
             `}
             >
                 {children}
+            </div>
+        </div>
+    )
+}
+
+interface ConceptItemProps {
+    thumbnail: string
+    name: string
+    weight: number
+}
+const ConceptItem: React.FC<ConceptItemProps> = ({ name, thumbnail, weight }) => {
+    const [sliderValue, setSliderValue] = useState(weight)
+    const [inputValue, setInputValue] = useState(weight)
+
+    return (
+        <div className='flex items-center justify-between p-1 border rounded-xl space-x-4'>
+            <div className='flex w-full items-center space-x-2'>
+                <img className='block w-10 h-10 rounded-full' src={thumbnail} alt='checkpoint icon' />
+                <span className='text-nowrap'>{name}</span>
+            </div>
+
+            <div className='flex justify-end space-x-2 items-center w-full'>
+                <Input
+                    type='number'
+                    className='flex-1 max-w-32 flex-grow'
+                    min={0}
+                    max={10}
+                    step={0.1}
+                    defaultValue={inputValue}
+                    onChange={(e) => {
+                        setInputValue(parseFloat(e.target.value))
+                    }}
+                />
+                <Button variant='destructive' className='w-8 h-8 rounded-full'>
+                    <TrashIcon />
+                </Button>
             </div>
         </div>
     )
@@ -81,7 +119,7 @@ export default function PageTxt2Img() {
 
                 {/* Image Settings */}
                 <div className='flex flex-col space-y-2'>
-                    <ImageSettingsGroup title='Prompt'>
+                    <GroupContainer title='Prompt'>
                         <div className='flex flex-col space-y-1'>
                             <div className='flex justify-between'>
                                 <Label htmlFor='prompt'>Prompt</Label>
@@ -97,7 +135,78 @@ export default function PageTxt2Img() {
                             </div>
                             <Textarea id='negative_prompt' className='p-1' />
                         </div>
-                    </ImageSettingsGroup>
+                    </GroupContainer>
+
+                    <GroupContainer title='Resources'>
+                        <div className='flex w-full space-x-2'>
+                            <div className='flex flex-col flex-grow'>
+                                <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
+                                    <span className='text-lg text-right'>Checkpoint:</span>
+                                    <div className='flex justify-between items-center w-full'>
+                                        <div className='flex flex-row items-center space-x-2'>
+                                            <img
+                                                className='block w-12 h-12 rounded-full'
+                                                src='https://picsum.photos/256/256'
+                                                alt='checkpoint icon'
+                                            />
+                                            <div className='flex flex-col justify-start text-nowrap'>
+                                                <span>StableDiffusion Checkpoint</span>
+                                                <span>V1.5</span>
+                                            </div>
+                                        </div>
+
+                                        <Button variant='outline'>
+                                            <ReplaceIcon />
+                                            Swap
+                                        </Button>
+                                    </div>
+
+                                    <span className='text-lg text-right'>VAE:</span>
+                                    <div className='flex justify-between items-center'>
+                                        <div className='flex flex-row items-center space-x-2'>
+                                            <img
+                                                className='block w-12 h-12 rounded-full'
+                                                src='https://picsum.photos/256/256'
+                                                alt='checkpoint icon'
+                                            />
+                                            <div className='flex flex-col justify-start text-nowrap'>
+                                                <span>StableDiffusion VAE</span>
+                                                <span>V1.5</span>
+                                            </div>
+                                        </div>
+
+                                        <Button variant='outline'>
+                                            <ReplaceIcon />
+                                            Swap
+                                        </Button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='flex flex-col space-y-4'>
+                            <GroupContainer title='Lora (2)'>
+                                <div className='rounded-xl w-full space-y-1'>
+                                    <ConceptItem name='LoRA 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                    <ConceptItem name='LoRA 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                </div>
+                            </GroupContainer>
+
+                            <GroupContainer title='Embedding (2)'>
+                                <div className='rounded-xl w-full space-y-1'>
+                                    <ConceptItem name='Embedding 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                    <ConceptItem name='Embedding 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                </div>
+                            </GroupContainer>
+
+                            <GroupContainer title='ControlNet'>
+                                <div className='text-center text-muted-foreground'>Coming Soon (TM)</div>
+                            </GroupContainer>
+                        </div>
+                    </GroupContainer>
+                    <GroupContainer title='Base Settings'>
+                        <p>Base Settings</p>
+                    </GroupContainer>
                 </div>
             </div>
 
