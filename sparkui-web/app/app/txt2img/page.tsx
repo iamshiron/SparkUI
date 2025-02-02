@@ -13,11 +13,13 @@ import { Progress } from '@/components/ui/progress'
 import { Label } from '@/components/ui/label'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
-
-import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
+import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
 
 import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon, ShuffleIcon } from 'lucide-react'
+
+import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
+import { ImageDimensions } from '@/components/sophia/ImageDimensions'
 
 interface GroupContainerProps {
     title: string
@@ -207,14 +209,16 @@ export default function PageTxt2Img() {
                         </div>
                     </GroupContainer>
                     <GroupContainer title='Base Settings'>
+                        <ImageDimensions />
+
                         <div className='flex space-x-2 items-center'>
                             <div className='flex flex-col w-full space-y-1'>
-                                <Label>Steps</Label>
-                                <Input type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
+                                <Label htmlFor='steps'>Steps</Label>
+                                <Input id='steps' type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
                             </div>
                             <div className='flex flex-col w-full space-y-1'>
-                                <Label>CFG Scale</Label>
-                                <Input type='number' className='text-center' min={1} max={20} defaultValue={7.5} step={0.1} />
+                                <Label htmlFor='cfgScale'>CFG Scale</Label>
+                                <Input id='cfgScale' type='number' className='text-center' min={1} max={20} defaultValue={7.5} step={0.1} />
                             </div>
                             <div className='flex flex-col w-full space-y-1'>
                                 <Label>Scheduler</Label>
@@ -237,7 +241,7 @@ export default function PageTxt2Img() {
 
                         <div className='grid grid-cols-[auto_1fr_1fr_auto] gap-2 items-center'>
                             <Label htmlFor='seed'>Seed</Label>
-                            <Input id='seed' type='number' className='pr-0 text-right' min={0} max={100} defaultValue={42} />
+                            <Input id='seed' type='number' className='text-center' min={0} max={100} defaultValue={42} />
                             <Button>
                                 <ShuffleIcon />
                                 Shuffle Seed
@@ -248,7 +252,7 @@ export default function PageTxt2Img() {
                             </div>
 
                             <Label htmlFor='subSeed'>Sub Seed</Label>
-                            <Input id='subSeed' type='number' className='pr-0 text-right' min={0} max={100} defaultValue={42} />
+                            <Input id='subSeed' type='number' className='text-center' min={0} max={100} defaultValue={42} />
                             <Button>
                                 <ShuffleIcon /> Shuffle Seed
                             </Button>
