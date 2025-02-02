@@ -16,6 +16,7 @@ import {
     Workflow as IconNode,
     ListEnd as IconQueue,
     Globe as IconGlobe,
+    Image as IconGallery,
 } from 'lucide-react'
 import { usePathname } from 'next/navigation'
 
@@ -34,6 +35,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         { name: 'Text to Image', href: '/app/txt2img', icon: IconText },
         { name: 'Image to Image', href: '/app/img2img', icon: IconImage },
         { name: 'Node Editor', href: '/app/nodes', icon: IconNode },
+        { name: 'Gallery', href: '/app/gallery', icon: IconGallery },
         { name: 'Model Browser', href: '/app/models', icon: IconGlobe },
         { name: 'Generation Queue', href: '/app/queue', icon: IconQueue },
     ]
