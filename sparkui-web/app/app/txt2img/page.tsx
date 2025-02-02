@@ -207,21 +207,30 @@ export default function PageTxt2Img() {
                         </div>
                     </GroupContainer>
                     <GroupContainer title='Base Settings'>
-                        <div className='flex space-x-2'>
-                            <Input type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
-                            <Input type='number' className='text-center' min={1} max={100} defaultValue={20} step={1} />
-                            <Select>
-                                <SelectTrigger className='flex-grow'>
-                                    <SelectValue placeholder='Scheduler' defaultValue={SCHEDULERS[0]} />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    {SCHEDULERS.map((scheduler, i) => (
-                                        <SelectItem key={i} value={scheduler}>
-                                            {scheduler}
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
+                        <div className='flex space-x-2 items-center'>
+                            <div className='flex flex-col w-full space-y-1'>
+                                <Label>Steps</Label>
+                                <Input type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
+                            </div>
+                            <div className='flex flex-col w-full space-y-1'>
+                                <Label>CFG Scale</Label>
+                                <Input type='number' className='text-center' min={1} max={20} defaultValue={7.5} step={0.1} />
+                            </div>
+                            <div className='flex flex-col w-full space-y-1'>
+                                <Label>Scheduler</Label>
+                                <Select>
+                                    <SelectTrigger className='flex-grow'>
+                                        <SelectValue placeholder='Scheduler' defaultValue={SCHEDULERS[0]} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {SCHEDULERS.map((scheduler, i) => (
+                                            <SelectItem key={i} value={scheduler}>
+                                                {scheduler}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
 
                         <hr className='my-2' />
