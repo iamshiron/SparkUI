@@ -14,7 +14,7 @@ export default function RootLayout({ children, meta }: RootLayoutProps) {
         <>
             <html lang='en' suppressHydrationWarning>
                 <head />
-                <body>
+                <body className='bg-background'>
                     <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
                         {children}
                     </ThemeProvider>

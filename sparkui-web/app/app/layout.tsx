@@ -67,12 +67,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
                             </TooltipProvider>
                         ))}
                     </div>
-                    <div
-                        className='flex-1 w-full h-full rounded-tl-lg p-2 shadow-md bg-transparent/10'
-                        style={{ height: 'calc(100vh - 78px)' }}
-                    >
-                        {children}
-                    </div>
+                    {children}
                 </div>
             </div>
         </div>
