@@ -16,7 +16,7 @@ import { Switch } from '@/components/ui/switch'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
 
-import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon, ShuffleIcon } from 'lucide-react'
+import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon, ShuffleIcon, CloudDownloadIcon } from 'lucide-react'
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { ImageDimensions } from '@/components/sophia/ImageDimensions'
@@ -85,6 +85,81 @@ const ConceptItem: React.FC<ConceptItemProps> = ({ name, thumbnail, weight }) =>
                     <TrashIcon />
                 </Button>
             </div>
+        </div>
+    )
+}
+
+interface ImageBoardProps {
+    thumbnail: string
+    name: string
+}
+const ImageBoard: React.FC<ImageBoardProps> = ({ thumbnail, name }) => {
+    return (
+        <>
+            <img className='h-12 aspect-square rounded-lg' src={thumbnail} />
+            <span className='truncate'>{name}</span>
+        </>
+    )
+}
+
+interface ImageBoard {
+    id: string
+    name: string
+    thumbnail: string
+}
+interface BoardSelectorProps {
+    boards: ImageBoard[]
+}
+const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
+    const [isOpen, setOpen] = useState(false)
+    const [selected, setSelectedItem] = useState<ImageBoard | null>(null)
+
+    const handleMouseEnter = () => {
+        setOpen(true)
+    }
+
+    const handleMouseLeave = () => {
+        setOpen(false)
+    }
+
+    const handleItemClick = (item: ImageBoard) => {
+        setSelectedItem(item)
+        setOpen(false)
+    }
+
+    return (
+        <div
+            className={`w-full transition-all duration-200 ease-in-out overflow-scroll ${isOpen ? 'max-h-48' : 'max-h-24'}`}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+        >
+            {isOpen ? (
+                // Show all items when hovering
+                <div className=''>
+                    {boards.map((item, i) => (
+                        <button
+                            onClick={() => handleItemClick(item)}
+                            key={i}
+                            className={`w-full text-left flex items-center space-x-2 p-2 rounded-xl ${
+                                selected != null && selected.id === item.id ? 'bg-background2' : ''
+                            }`}
+                        >
+                            <ImageBoard name={item.name} thumbnail={item.thumbnail} />
+                        </button>
+                    ))}
+                </div>
+            ) : (
+                // Show only selected item when not hovering
+                <div className='h-fit'>
+                    {selected ? (
+                        <div className='w-full text-left flex items-center space-x-2 rounded-xl p-2'>
+                            <ImageBoard name={selected.name} thumbnail={selected.thumbnail} />
+                        </div>
+                    ) : (
+                        <div className='text-gray-500'>Hover to select an item</div>
+                    )}
+                </div>
+            )}
         </div>
     )
 }
@@ -267,7 +342,58 @@ export default function PageTxt2Img() {
 
             <div className='flex flex-grow'>Main</div>
 
-            <div className='flex w-1/4'>Viewer</div>
+            <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
+                <header className='flex sticky items-center gap-2 top-0 z-10 bg-inherit py-2 flex-col'>
+                    <div className='flex w-full items-center space-x-2'>
+                        <div className='grid w-full grid-cols-2 gap-2'>
+                            <Button className='rounded-full h-10'>
+                                <CloudDownloadIcon />
+                                Download
+                            </Button>
+                            <Button className='rounded-full h-10' variant='destructive'>
+                                <TrashIcon />
+                                Delete
+                            </Button>
+                        </div>
+
+                        <Select>
+                            <SelectTrigger className='flex-grow'>
+                                <SelectValue placeholder='Image Size' defaultValue={SCHEDULERS[0]} />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value='small'>Small</SelectItem>
+                                <SelectItem value='medium'>Medium</SelectItem>
+                                <SelectItem value='large'>Large</SelectItem>
+                                <SelectItem value='xl'>XL</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    <span className='text-2xl text-left w-full'>Boards:</span>
+                    <div className='w-full px-2'>
+                        <BoardSelector
+                            boards={[
+                                { id: 'd8d78175-757c-43e1-81ea-a1d9398d11f5', name: 'Board 1', thumbnail: 'https://picsum.photos/256/256' },
+                                { id: '251d7ab8-6ab0-46f8-8629-8ec78a9e04dc', name: 'Board 2', thumbnail: 'https://picsum.photos/256/256' },
+                                { id: 'cbdb4669-e1f3-4d3d-a47a-3a05c26db016', name: 'Board 3', thumbnail: 'https://picsum.photos/256/256' },
+                                { id: '75f4ed77-b6a2-47f5-b772-e5a6fee1219b', name: 'Board 4', thumbnail: 'https://picsum.photos/256/256' },
+                                { id: '9d0fe868-d153-4af8-a7ef-9a005da6ee8a', name: 'Board 5', thumbnail: 'https://picsum.photos/256/256' },
+                            ]}
+                        />
+                    </div>
+                </header>
+
+                <div className='grid grid-cols-4 gap-2'>
+                    {[...Array(102).keys()].map((i) => (
+                        <img
+                            className='w-full aspect-square object-cover rounded'
+                            key={i}
+                            src={`https://picsum.photos/256/512`}
+                            alt='random'
+                        />
+                    ))}
+                </div>
+            </div>
         </div>
     )
 }
