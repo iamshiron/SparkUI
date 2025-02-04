@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { Button } from '@/components/ui/button'
@@ -129,17 +129,37 @@ interface BoardSelectorProps {
 const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
     const [isOpen, setOpen] = useState(false)
     const [selected, setSelectedItem] = useState<ImageBoard | null>(null)
+    const [isHovering, setIsHovering] = useState(false)
+
+    useEffect(() => {
+        let timeoutId: NodeJS.Timeout
+
+        if (isHovering) {
+            timeoutId = setTimeout(() => {
+                setOpen(true)
+            }, 200) // 500ms delay before opening
+        } else {
+            setOpen(false)
+        }
+
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId)
+            }
+        }
+    }, [isHovering])
 
     const handleMouseEnter = () => {
-        setOpen(true)
+        setIsHovering(true)
     }
 
     const handleMouseLeave = () => {
-        setOpen(false)
+        setIsHovering(false)
     }
 
     const handleItemClick = (item: ImageBoard) => {
         setSelectedItem(item)
+        setIsHovering(false)
         setOpen(false)
     }
 
@@ -150,14 +170,13 @@ const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
             onMouseLeave={handleMouseLeave}
         >
             {isOpen ? (
-                // Show all items when hovering
-                <div className=''>
+                <div className='py-1'>
                     {boards.map((item, i) => (
                         <button
                             onClick={() => handleItemClick(item)}
                             key={i}
-                            className={`w-full text-left flex items-center space-x-2 p-2 rounded-xl ${
-                                selected != null && selected.id === item.id ? 'bg-background2' : ''
+                            className={`w-full text-left flex items-center space-x-2 p-2 rounded-xl hover:bg-background2 ${
+                                selected?.id === item.id ? 'bg-background2' : ''
                             }`}
                         >
                             <ImageBoard name={item.name} thumbnail={item.thumbnail} />
@@ -165,7 +184,6 @@ const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
                     ))}
                 </div>
             ) : (
-                // Show only selected item when not hovering
                 <div className='h-fit'>
                     {selected ? (
                         <div className='w-full text-left flex items-center space-x-2 rounded-xl p-2'>
@@ -176,6 +194,130 @@ const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
                     )}
                 </div>
             )}
+        </div>
+    )
+}
+
+interface ImageGridProps {
+    images: string[]
+}
+const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
+    const [imageAspects, setImageAspects] = useState<number[]>([])
+    const [selectedImage, setSelectedImage] = useState<number | null>(null)
+
+    useEffect(() => {
+        const loadImages = async () => {
+            const aspects = await Promise.all(
+                images.map((image) => {
+                    return new Promise<number>((resolve) => {
+                        const img = new Image()
+                        img.onload = () => {
+                            resolve(img.naturalWidth / img.naturalHeight)
+                        }
+                        img.src = image
+                    })
+                })
+            )
+            setImageAspects(aspects)
+        }
+
+        loadImages()
+    }, [images])
+
+    const getGridClass = () => {
+        const count = images.length
+        switch (count) {
+            case 0:
+                return 'hidden'
+            case 1:
+                return 'grid-cols-1'
+            case 2:
+                return 'grid-cols-2'
+            case 3:
+                return 'grid-cols-3'
+            case 4:
+                return 'grid-cols-2'
+            case 5:
+            case 6:
+            case 7:
+            case 8:
+            case 9:
+                return 'grid-cols-3'
+            default:
+                return 'grid-cols-4'
+        }
+    }
+
+    if (!images?.length) return null
+
+    const handleImageClick = (index: number) => {
+        setSelectedImage(selectedImage === index ? null : index)
+    }
+
+    if (selectedImage !== null) {
+        return (
+            <div onClick={() => setSelectedImage(null)} className='fixed inset-0 z-50 flex items-center justify-center bg-black/90'>
+                <button
+                    onClick={() => setSelectedImage(null)}
+                    className='flex items-center justify-center border-border border-2 p-2 absolute top-16 right-16 w-16 h-16 rounded-full bg-transparent hover:bg-accent transition-colors duration-200'
+                >
+                    <XIcon size={32} />
+                </button>
+                <div className='relative z-10 max-w-screen-xl max-h-screen p-4'>
+                    <img
+                        src={images[selectedImage]}
+                        alt={`Generated Image ${selectedImage + 1}`}
+                        className='max-w-full max-h-[90vh] object-contain'
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                </div>
+            </div>
+        )
+    }
+
+    return (
+        <div className='max-h-screen overflow-y-auto'>
+            <div className='w-full max-w-4xl mx-auto space-y-4'>
+                <div className='p-4'>
+                    <div className={`grid gap-2 ${getGridClass()}`}>
+                        {images.map((image, i) => (
+                            <div
+                                key={i}
+                                className='relative w-full overflow-hidden cursor-pointer'
+                                style={{
+                                    aspectRatio: imageAspects[i] || 1,
+                                    maxHeight: '70vh',
+                                }}
+                                onClick={() => handleImageClick(i)}
+                            >
+                                <img
+                                    src={image}
+                                    alt={`Generated Image ${i + 1}`}
+                                    className='absolute rounded inset-0 w-full h-full object-cover'
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className='sticky bottom-0 bg-background3 p-4 rounded-lg'>
+                    <div className='flex gap-2 flex-wrap justify-center'>
+                        {images.map((image, index) => (
+                            <div
+                                key={index}
+                                className='w-16 h-16 relative cursor-pointer hover:opacity-75 transition-opacity'
+                                onClick={() => handleImageClick(index)}
+                            >
+                                <img
+                                    src={image}
+                                    alt={`Thumbnail ${index + 1}`}
+                                    className='absolute rounded inset-0 w-full h-full object-cover'
+                                />
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }
@@ -450,6 +592,8 @@ export default function PageTxt2Img() {
                         </Tooltip>
                     </TooltipProvider>
                 </div>
+
+                {/*
                 {selectedOutputImage ? (
                     <div className='rounded-md items-center'>
                         <img className='max-w-[24vw] max-h-[72vh]' src={selectedOutputImage} />
@@ -478,6 +622,9 @@ export default function PageTxt2Img() {
                         </button>
                     ))}
                 </div>
+                */}
+
+                <ImageGrid images={outputImages} />
             </div>
 
             <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
