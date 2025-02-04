@@ -15,11 +15,27 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Switch } from '@/components/ui/switch'
 import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
+import { Card, CardContent } from '@/components/ui/card'
 
-import { ZapIcon, XIcon, TrashIcon, ChevronDownIcon, ReplaceIcon, PlusIcon, ShuffleIcon, CloudDownloadIcon } from 'lucide-react'
+import {
+    ZapIcon,
+    XIcon,
+    TrashIcon,
+    ChevronDownIcon,
+    ReplaceIcon,
+    PlusIcon,
+    ShuffleIcon,
+    CloudDownloadIcon,
+    SproutIcon,
+    AsteriskIcon,
+    TypeIcon,
+    EllipsisVerticalIcon,
+} from 'lucide-react'
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { ImageDimensions } from '@/components/sophia/ImageDimensions'
+import { Separator } from '@radix-ui/react-separator'
 
 interface GroupContainerProps {
     title: string
@@ -167,6 +183,20 @@ const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
 const SCHEDULERS = ['Euler A', 'DPM++ 2M', 'DPM++ 2M Karras', 'DPM++ 2M Exponential']
 
 export default function PageTxt2Img() {
+    const outputImages = [
+        'https://picsum.photos/768/1024?random=1',
+        'https://picsum.photos/768/1024?random=2',
+        'https://picsum.photos/768/1024?random=3',
+        'https://picsum.photos/768/1024?random=4',
+        'https://picsum.photos/768/1024?random=5',
+        'https://picsum.photos/768/1024?random=6',
+        'https://picsum.photos/768/1024?random=7',
+        'https://picsum.photos/768/1024?random=8',
+        'https://picsum.photos/768/1024?random=9',
+    ]
+
+    const [selectedOutputImage, setSelectedOutputImage] = useState<string | null>(null)
+
     return (
         <div className='flex w-full h-full bg-background2 p-2 rounded-tl-lg' style={{ height: 'calc(100vh - 78px)' }}>
             <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
@@ -340,7 +370,115 @@ export default function PageTxt2Img() {
                 </div>
             </div>
 
-            <div className='flex flex-grow'>Main</div>
+            <div className='flex items-center justify-around flex-col px-36 w-1/2'>
+                <div className='flex space-x-2'>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
+                                    <TypeIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Re-Use Prompt</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
+                                    <SproutIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Re-Use Seed</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
+                                    <AsteriskIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Re-Use All</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='destructive' className='w-10 h-10 rounded-full'>
+                                    <XIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Delete Image</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='destructive' className='w-10 h-10 rounded-full'>
+                                    <TrashIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>Delete Batch</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
+                                    <EllipsisVerticalIcon />
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>More Options</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+                {selectedOutputImage ? (
+                    <div className='rounded-md items-center'>
+                        <img className='max-w-[24vw] max-h-[72vh]' src={selectedOutputImage} />
+                    </div>
+                ) : (
+                    <div
+                        className={`rounded-md items-center gap-2 grid grid-cols-${
+                            selectedOutputImage ? '1' : outputImages.length > 5 ? '3' : outputImages.length > 3 ? '2' : '1'
+                        }`}
+                    >
+                        {outputImages.map((image, i) => (
+                            <img className='max-w-[8vw] max-h-[24vh]' src={image} />
+                        ))}
+                    </div>
+                )}
+                <div className='flex h-24 bg-background3 rounded-md p-2 space-x-2'>
+                    {outputImages.map((image, i) => (
+                        <button
+                            className={`rounded-lg ${
+                                selectedOutputImage === image ? 'border-primary border-2' : 'border-none'
+                            } hover:scale-110 transition-transform`}
+                            onClick={() => setSelectedOutputImage(selectedOutputImage === image ? null : image)}
+                            key={i}
+                        >
+                            <img src={image} className='w-full h-full rounded-lg' />
+                        </button>
+                    ))}
+                </div>
+            </div>
 
             <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
                 <header className='flex sticky items-center gap-2 top-0 z-10 bg-inherit py-2 flex-col'>
@@ -373,11 +511,31 @@ export default function PageTxt2Img() {
                     <div className='w-full px-2'>
                         <BoardSelector
                             boards={[
-                                { id: 'd8d78175-757c-43e1-81ea-a1d9398d11f5', name: 'Board 1', thumbnail: 'https://picsum.photos/256/256' },
-                                { id: '251d7ab8-6ab0-46f8-8629-8ec78a9e04dc', name: 'Board 2', thumbnail: 'https://picsum.photos/256/256' },
-                                { id: 'cbdb4669-e1f3-4d3d-a47a-3a05c26db016', name: 'Board 3', thumbnail: 'https://picsum.photos/256/256' },
-                                { id: '75f4ed77-b6a2-47f5-b772-e5a6fee1219b', name: 'Board 4', thumbnail: 'https://picsum.photos/256/256' },
-                                { id: '9d0fe868-d153-4af8-a7ef-9a005da6ee8a', name: 'Board 5', thumbnail: 'https://picsum.photos/256/256' },
+                                {
+                                    id: 'd8d78175-757c-43e1-81ea-a1d9398d11f5',
+                                    name: 'Board 1',
+                                    thumbnail: 'https://picsum.photos/256/256',
+                                },
+                                {
+                                    id: '251d7ab8-6ab0-46f8-8629-8ec78a9e04dc',
+                                    name: 'Board 2',
+                                    thumbnail: 'https://picsum.photos/256/256',
+                                },
+                                {
+                                    id: 'cbdb4669-e1f3-4d3d-a47a-3a05c26db016',
+                                    name: 'Board 3',
+                                    thumbnail: 'https://picsum.photos/256/256',
+                                },
+                                {
+                                    id: '75f4ed77-b6a2-47f5-b772-e5a6fee1219b',
+                                    name: 'Board 4',
+                                    thumbnail: 'https://picsum.photos/256/256',
+                                },
+                                {
+                                    id: '9d0fe868-d153-4af8-a7ef-9a005da6ee8a',
+                                    name: 'Board 5',
+                                    thumbnail: 'https://picsum.photos/256/256',
+                                },
                             ]}
                         />
                     </div>
@@ -386,9 +544,8 @@ export default function PageTxt2Img() {
                 <div className='grid grid-cols-4 gap-2'>
                     {[...Array(102).keys()].map((i) => (
                         <img
-                            className='w-full aspect-square object-cover rounded'
-                            key={i}
-                            src={`https://picsum.photos/256/512`}
+                            className='w-full aspect-square object-cover rounded transition-all duration-200 hover:scale-110 z-10'
+                            src={`https://picsum.photos/1024/768`}
                             alt='random'
                         />
                     ))}
