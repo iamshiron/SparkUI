@@ -593,37 +593,6 @@ export default function PageTxt2Img() {
                     </TooltipProvider>
                 </div>
 
-                {/*
-                {selectedOutputImage ? (
-                    <div className='rounded-md items-center'>
-                        <img className='max-w-[24vw] max-h-[72vh]' src={selectedOutputImage} />
-                    </div>
-                ) : (
-                    <div
-                        className={`rounded-md items-center gap-2 grid grid-cols-${
-                            selectedOutputImage ? '1' : outputImages.length > 5 ? '3' : outputImages.length > 3 ? '2' : '1'
-                        }`}
-                    >
-                        {outputImages.map((image, i) => (
-                            <img className='max-w-[8vw] max-h-[24vh]' src={image} />
-                        ))}
-                    </div>
-                )}
-                <div className='flex h-24 bg-background3 rounded-md p-2 space-x-2'>
-                    {outputImages.map((image, i) => (
-                        <button
-                            className={`rounded-lg ${
-                                selectedOutputImage === image ? 'border-primary border-2' : 'border-none'
-                            } hover:scale-110 transition-transform`}
-                            onClick={() => setSelectedOutputImage(selectedOutputImage === image ? null : image)}
-                            key={i}
-                        >
-                            <img src={image} className='w-full h-full rounded-lg' />
-                        </button>
-                    ))}
-                </div>
-                */}
-
                 <ImageGrid images={outputImages} />
             </div>
 
@@ -689,8 +658,9 @@ export default function PageTxt2Img() {
                 </header>
 
                 <div className='grid grid-cols-4 gap-2'>
-                    {[...Array(102).keys()].map((i) => (
+                    {[...Array(102).keys()].map((i, idx) => (
                         <img
+                            key={idx}
                             className='w-full aspect-square object-cover rounded transition-all duration-200 hover:scale-110 z-10'
                             src={`https://picsum.photos/1024/768`}
                             alt='random'
