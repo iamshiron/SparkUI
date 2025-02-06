@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable'
 import { Button } from '@/components/ui/button'
@@ -17,6 +17,16 @@ import { AspectRatio } from '@/components/ui/aspect-ratio'
 import { Textarea } from '@/components/ui/textarea'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from '@/components/ui/carousel'
 import { Card, CardContent } from '@/components/ui/card'
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+    ContextMenuSeparator,
+    ContextMenuSub,
+    ContextMenuSubContent,
+    ContextMenuSubTrigger,
+} from '@/components/ui/context-menu'
 
 import {
     ZapIcon,
@@ -31,11 +41,12 @@ import {
     AsteriskIcon,
     TypeIcon,
     EllipsisVerticalIcon,
+    ForwardIcon,
+    DownloadIcon,
 } from 'lucide-react'
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { ImageDimensions } from '@/components/sophia/ImageDimensions'
-import { Separator } from '@radix-ui/react-separator'
 
 interface GroupContainerProps {
     title: string
@@ -198,10 +209,27 @@ const BoardSelector: React.FC<BoardSelectorProps> = ({ boards }) => {
     )
 }
 
+interface ImageGridContextItem {
+    type: 'item'
+    icon?: ReactNode
+    text: string
+    onClick?: (id: number) => void
+}
+interface ImageGridContextSeparator {
+    type: 'separator'
+}
+interface ImageGridContextSubmenu {
+    type: 'submenu'
+    icon?: ReactNode
+    text: string
+    items: ImageGridContext[]
+}
+type ImageGridContext = ImageGridContextItem | ImageGridContextSeparator | ImageGridContextSubmenu
 interface ImageGridProps {
     images: string[]
+    contextMenu: ImageGridContext[]
 }
-const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
+const ImageGrid: React.FC<ImageGridProps> = ({ images, contextMenu }) => {
     const [imageAspects, setImageAspects] = useState<number[]>([])
     const [selectedImage, setSelectedImage] = useState<number | null>(null)
 
@@ -275,27 +303,60 @@ const ImageGrid: React.FC<ImageGridProps> = ({ images }) => {
         )
     }
 
+    function createContextItem(item: ImageGridContext, imageID: number, idx?: number) {
+        switch (item.type) {
+            case 'item': {
+                const it = item as ImageGridContextItem
+                return (
+                    <ContextMenuItem key={idx} onClick={() => it.onClick?.(imageID)}>
+                        {it.icon ? it.icon : <></>} <span className='ml-2'>{it.text}</span>
+                    </ContextMenuItem>
+                )
+            }
+            case 'separator': {
+                const it = item as ImageGridContextSeparator
+                return <ContextMenuSeparator key={idx} />
+            }
+            case 'submenu': {
+                const it = item as ImageGridContextSubmenu
+                return (
+                    <ContextMenuSub key={idx}>
+                        <ContextMenuSubTrigger>
+                            {it.icon ? it.icon : <></>} <span className='ml-2'>{it.text}</span>
+                        </ContextMenuSubTrigger>
+                        <ContextMenuSubContent>{it.items.map((i, idx) => createContextItem(i, imageID, idx))}</ContextMenuSubContent>
+                    </ContextMenuSub>
+                )
+            }
+        }
+    }
+
     return (
         <div className='max-h-screen overflow-y-auto'>
             <div className='w-full max-w-4xl mx-auto space-y-4'>
                 <div className='p-4'>
                     <div className={`grid gap-2 ${getGridClass()}`}>
                         {images.map((image, i) => (
-                            <div
-                                key={i}
-                                className='relative w-full overflow-hidden cursor-pointer'
-                                style={{
-                                    aspectRatio: imageAspects[i] || 1,
-                                    maxHeight: '70vh',
-                                }}
-                                onClick={() => handleImageClick(i)}
-                            >
-                                <img
-                                    src={image}
-                                    alt={`Generated Image ${i + 1}`}
-                                    className='absolute rounded inset-0 w-full h-full object-cover'
-                                />
-                            </div>
+                            <ContextMenu key={i}>
+                                <ContextMenuTrigger>
+                                    <div
+                                        className='relative w-full overflow-hidden cursor-pointer'
+                                        style={{
+                                            aspectRatio: imageAspects[i] || 1,
+                                            maxHeight: '70vh',
+                                        }}
+                                        onClick={() => handleImageClick(i)}
+                                    >
+                                        <img
+                                            src={image}
+                                            alt={`Generated Image ${i + 1}`}
+                                            className='absolute rounded inset-0 w-full h-full object-cover'
+                                        />
+                                    </div>
+                                </ContextMenuTrigger>
+
+                                <ContextMenuContent>{contextMenu.map((item, idx) => createContextItem(item, i, idx))}</ContextMenuContent>
+                            </ContextMenu>
                         ))}
                     </div>
                 </div>
@@ -513,87 +574,78 @@ export default function PageTxt2Img() {
             </div>
 
             <div className='flex items-center justify-around flex-col px-36 w-1/2'>
-                <div className='flex space-x-2'>
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
-                                    <TypeIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Re-Use Prompt</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
-                                    <SproutIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Re-Use Seed</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
-                                    <AsteriskIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Re-Use All</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='destructive' className='w-10 h-10 rounded-full'>
-                                    <XIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Delete Image</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='destructive' className='w-10 h-10 rounded-full'>
-                                    <TrashIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>Delete Batch</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip>
-                            <TooltipTrigger asChild>
-                                <Button variant='outline' className='bg-background2 hover:bg-accent w-10 h-10 rounded-full'>
-                                    <EllipsisVerticalIcon />
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent>
-                                <p>More Options</p>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                </div>
-
-                <ImageGrid images={outputImages} />
+                <ImageGrid
+                    images={outputImages}
+                    contextMenu={[
+                        {
+                            type: 'item',
+                            icon: <TypeIcon />,
+                            text: 'Re-Use Prompt',
+                            onClick: (id) => console.log('Re-Use Prompt', id),
+                        },
+                        {
+                            type: 'item',
+                            icon: <SproutIcon />,
+                            text: 'Re-Use Seed',
+                            onClick: (id) => console.log('Re-Use Seed', id),
+                        },
+                        {
+                            type: 'item',
+                            icon: <AsteriskIcon />,
+                            text: 'Re-Use Everything',
+                            onClick: (id) => console.log('Re-Use Everything', id),
+                        },
+                        {
+                            type: 'separator',
+                        },
+                        {
+                            type: 'item',
+                            icon: <EllipsisVerticalIcon />,
+                            text: 'More Options...',
+                            onClick: (id) => console.log('More Options', id),
+                        },
+                        {
+                            type: 'submenu',
+                            icon: <ForwardIcon />,
+                            text: 'Send To...',
+                            items: [
+                                {
+                                    type: 'item',
+                                    text: 'Input Image',
+                                    onClick: (id) => console.log('Input Image', id),
+                                },
+                                {
+                                    type: 'item',
+                                    text: 'Image Editor',
+                                    onClick: (id) => console.log('Image Editor', id),
+                                },
+                                {
+                                    type: 'item',
+                                    text: 'Board',
+                                    onClick: (id) => console.log('Board', id),
+                                },
+                            ],
+                        },
+                        {
+                            type: 'separator',
+                        },
+                        {
+                            type: 'item',
+                            icon: <DownloadIcon />,
+                            text: 'Download',
+                            onClick: (id) => console.log('Download', id),
+                        },
+                        {
+                            type: 'separator',
+                        },
+                        {
+                            type: 'item',
+                            icon: <TrashIcon />,
+                            text: 'Delete',
+                            onClick: (id) => console.log('Delete', id),
+                        },
+                    ]}
+                />
             </div>
 
             <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
