@@ -47,6 +47,7 @@ import {
 
 import { EnhancedProgress } from '@/components/sophia/EnhancedProgress'
 import { ImageDimensions } from '@/components/sophia/ImageDimensions'
+import { ItemSelector } from '@/components/sophia/ItemSelector'
 
 interface GroupContainerProps {
     title: string
@@ -407,326 +408,344 @@ export default function PageTxt2Img() {
 
     const [selectedOutputImage, setSelectedOutputImage] = useState<string | null>(null)
 
+    const [itemSelectorOpen, setItemSelectorOpen] = useState(false)
+
     return (
-        <div className='flex w-full h-full bg-background2 p-2 rounded-tl-lg' style={{ height: 'calc(100vh - 78px)' }}>
-            <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
-                <header className='flex sticky items-center gap-2 flex-col top-0 z-10 bg-inherit py-2'>
-                    <div className='flex gap-1 w-full'>
-                        <div className='flex flex-grow space-x-1'>
-                            <Button className='flex-grow px-2'>Generate</Button>
-                            <Button className='w-10' variant='secondary'>
-                                <ZapIcon />
-                            </Button>
-                        </div>
+        <>
+            <ItemSelector size='xl' open={itemSelectorOpen} onClose={() => setItemSelectorOpen(false)} onSelect={(item: string) => {}} />
 
-                        <Input className='flex-shrink max-w-16' type='number' min={1} max={9} defaultValue={4} />
-                        <Input className='flex-shrink max-w-16' type='number' min={1} max={9} defaultValue={4} />
-
-                        <div className='flex space-x-1'>
-                            <Button className='w-10' variant='destructive'>
-                                <XIcon />
-                            </Button>
-                            <Button className='w-10' variant='destructive'>
-                                <TrashIcon />
-                            </Button>
-                        </div>
-                    </div>
-
-                    <Progress />
-                    <Progress variant='secondary' />
-                </header>
-
-                {/* Image Settings */}
-                <div className='flex flex-col space-y-2'>
-                    <GroupContainer title='Prompt'>
-                        <div className='flex flex-col space-y-1'>
-                            <div className='flex justify-between'>
-                                <Label htmlFor='prompt'>Prompt</Label>
-                                <Label htmlFor='prompt'>20/75</Label>
+            <div className='flex w-full h-full bg-background2 p-2 rounded-tl-lg' style={{ height: 'calc(100vh - 78px)' }}>
+                <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
+                    <header className='flex sticky items-center gap-2 flex-col top-0 z-10 bg-inherit py-2'>
+                        <div className='flex gap-1 w-full'>
+                            <div className='flex flex-grow space-x-1'>
+                                <Button className='flex-grow px-2'>Generate</Button>
+                                <Button className='w-10' variant='secondary'>
+                                    <ZapIcon />
+                                </Button>
                             </div>
-                            <Textarea id='prompt' className='p-1' />
-                        </div>
 
-                        <div className='flex flex-col space-y-1'>
-                            <div className='flex justify-between'>
-                                <Label htmlFor='negative_prompt'>Negative Prompt</Label>
-                                <Label htmlFor='negative_prompt'>15/75</Label>
+                            <Input className='flex-shrink max-w-16' type='number' min={1} max={9} defaultValue={4} />
+                            <Input className='flex-shrink max-w-16' type='number' min={1} max={9} defaultValue={4} />
+
+                            <div className='flex space-x-1'>
+                                <Button className='w-10' variant='destructive'>
+                                    <XIcon />
+                                </Button>
+                                <Button className='w-10' variant='destructive'>
+                                    <TrashIcon />
+                                </Button>
                             </div>
-                            <Textarea id='negative_prompt' className='p-1' />
                         </div>
-                    </GroupContainer>
 
-                    <GroupContainer title='Resources'>
-                        <div className='flex w-full space-x-2'>
-                            <div className='flex flex-col flex-grow'>
-                                <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
-                                    <span className='text-lg text-right'>Checkpoint:</span>
-                                    <div className='flex justify-between items-center w-full'>
-                                        <div className='flex flex-row items-center space-x-2'>
-                                            <img
-                                                className='block w-12 h-12 rounded-full'
-                                                src='https://picsum.photos/256/256'
-                                                alt='checkpoint icon'
-                                            />
-                                            <div className='flex flex-col justify-start text-nowrap'>
-                                                <span>StableDiffusion Checkpoint</span>
-                                                <span>V1.5</span>
+                        <Progress />
+                        <Progress variant='secondary' />
+                    </header>
+
+                    {/* Image Settings */}
+                    <div className='flex flex-col space-y-2'>
+                        <GroupContainer title='Prompt'>
+                            <div className='flex flex-col space-y-1'>
+                                <div className='flex justify-between'>
+                                    <Label htmlFor='prompt'>Prompt</Label>
+                                    <Label htmlFor='prompt'>20/75</Label>
+                                </div>
+                                <Textarea id='prompt' className='p-1' />
+                            </div>
+
+                            <div className='flex flex-col space-y-1'>
+                                <div className='flex justify-between'>
+                                    <Label htmlFor='negative_prompt'>Negative Prompt</Label>
+                                    <Label htmlFor='negative_prompt'>15/75</Label>
+                                </div>
+                                <Textarea id='negative_prompt' className='p-1' />
+                            </div>
+                        </GroupContainer>
+
+                        <GroupContainer title='Resources'>
+                            <div className='flex w-full space-x-2'>
+                                <div className='flex flex-col flex-grow'>
+                                    <div className='grid grid-cols-[auto_1fr] items-center gap-2'>
+                                        <span className='text-lg text-right'>Checkpoint:</span>
+                                        <div className='flex justify-between items-center w-full'>
+                                            <div className='flex flex-row items-center space-x-2'>
+                                                <img
+                                                    className='block w-12 h-12 rounded-full'
+                                                    src='https://picsum.photos/256/256'
+                                                    alt='checkpoint icon'
+                                                />
+                                                <div className='flex flex-col justify-start text-nowrap'>
+                                                    <span>StableDiffusion Checkpoint</span>
+                                                    <span>V1.5</span>
+                                                </div>
                                             </div>
+
+                                            <Button
+                                                variant='outline'
+                                                onClick={() => {
+                                                    console.log('Lol')
+                                                    setItemSelectorOpen(true)
+                                                }}
+                                            >
+                                                <ReplaceIcon />
+                                                Swap
+                                            </Button>
                                         </div>
 
-                                        <Button variant='outline'>
-                                            <ReplaceIcon />
-                                            Swap
-                                        </Button>
-                                    </div>
-
-                                    <span className='text-lg text-right'>VAE:</span>
-                                    <div className='flex justify-between items-center'>
-                                        <div className='flex flex-row items-center space-x-2'>
-                                            <img
-                                                className='block w-12 h-12 rounded-full'
-                                                src='https://picsum.photos/256/256'
-                                                alt='checkpoint icon'
-                                            />
-                                            <div className='flex flex-col justify-start text-nowrap'>
-                                                <span>StableDiffusion VAE</span>
-                                                <span>V1.5</span>
+                                        <span className='text-lg text-right'>VAE:</span>
+                                        <div className='flex justify-between items-center'>
+                                            <div className='flex flex-row items-center space-x-2'>
+                                                <img
+                                                    className='block w-12 h-12 rounded-full'
+                                                    src='https://picsum.photos/256/256'
+                                                    alt='checkpoint icon'
+                                                />
+                                                <div className='flex flex-col justify-start text-nowrap'>
+                                                    <span>StableDiffusion VAE</span>
+                                                    <span>V1.5</span>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <Button variant='outline'>
-                                            <ReplaceIcon />
-                                            Swap
-                                        </Button>
+                                            <Button variant='outline'>
+                                                <ReplaceIcon />
+                                                Swap
+                                            </Button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className='flex flex-col space-y-4'>
-                            <GroupContainer title='Lora (2)'>
-                                <div className='rounded-xl w-full space-y-1'>
-                                    <ConceptItem name='LoRA 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
-                                    <ConceptItem name='LoRA 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                            <div className='flex flex-col space-y-4'>
+                                <GroupContainer title='Lora (2)'>
+                                    <div className='rounded-xl w-full space-y-1'>
+                                        <ConceptItem name='LoRA 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                        <ConceptItem name='LoRA 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                    </div>
+                                </GroupContainer>
+
+                                <GroupContainer title='Embedding (2)'>
+                                    <div className='rounded-xl w-full space-y-1'>
+                                        <ConceptItem name='Embedding 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                        <ConceptItem name='Embedding 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                    </div>
+                                </GroupContainer>
+
+                                <GroupContainer title='ControlNet'>
+                                    <div className='text-center text-muted-foreground'>Coming Soon (TM)</div>
+                                </GroupContainer>
+                            </div>
+                        </GroupContainer>
+                        <GroupContainer title='Base Settings'>
+                            <ImageDimensions />
+
+                            <div className='flex space-x-2 items-center'>
+                                <div className='flex flex-col w-full space-y-1'>
+                                    <Label htmlFor='steps'>Steps</Label>
+                                    <Input id='steps' type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
                                 </div>
-                            </GroupContainer>
-
-                            <GroupContainer title='Embedding (2)'>
-                                <div className='rounded-xl w-full space-y-1'>
-                                    <ConceptItem name='Embedding 1' thumbnail='https://picsum.photos/256/256' weight={2.5} />
-                                    <ConceptItem name='Embedding 2' thumbnail='https://picsum.photos/256/256' weight={2.5} />
+                                <div className='flex flex-col w-full space-y-1'>
+                                    <Label htmlFor='cfgScale'>CFG Scale</Label>
+                                    <Input
+                                        id='cfgScale'
+                                        type='number'
+                                        className='text-center'
+                                        min={1}
+                                        max={20}
+                                        defaultValue={7.5}
+                                        step={0.1}
+                                    />
                                 </div>
-                            </GroupContainer>
+                                <div className='flex flex-col w-full space-y-1'>
+                                    <Label>Scheduler</Label>
+                                    <Select>
+                                        <SelectTrigger className='flex-grow'>
+                                            <SelectValue placeholder='Scheduler' defaultValue={SCHEDULERS[0]} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {SCHEDULERS.map((scheduler, i) => (
+                                                <SelectItem key={i} value={scheduler}>
+                                                    {scheduler}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                </div>
+                            </div>
 
-                            <GroupContainer title='ControlNet'>
-                                <div className='text-center text-muted-foreground'>Coming Soon (TM)</div>
-                            </GroupContainer>
+                            <div className='grid grid-cols-[auto_5fr_4fr_auto] gap-2 items-center'>
+                                <Label htmlFor='seed'>Seed</Label>
+                                <Input id='seed' type='number' className='text-center' min={0} defaultValue={42} />
+                                <Button>
+                                    <ShuffleIcon />
+                                    Shuffle Seed
+                                </Button>
+                                <div className='flex justify-around space-x-2 items-center w-full'>
+                                    <Switch id='lockSeed' />
+                                    <Label htmlFor='lockSeed'>Lock</Label>
+                                </div>
+
+                                <Label htmlFor='subSeed'>Sub Seed</Label>
+                                <Input id='subSeed' type='number' className='text-center' min={0} defaultValue={7} />
+                                <Button>
+                                    <ShuffleIcon /> Shuffle Seed
+                                </Button>
+                                <div className='flex justify-around space-x-2 items-center w-full'>
+                                    <Switch id='lockSubSeed' />
+                                    <Label htmlFor='lockSubSeed'>Lock</Label>
+                                </div>
+                            </div>
+                        </GroupContainer>
+                    </div>
+                </div>
+
+                <div className='flex items-center justify-around flex-col px-36 w-1/2'>
+                    <ImageGrid
+                        images={outputImages}
+                        contextMenu={[
+                            {
+                                type: 'item',
+                                icon: <TypeIcon />,
+                                text: 'Re-Use Prompt',
+                                onClick: (id) => console.log('Re-Use Prompt', id),
+                            },
+                            {
+                                type: 'item',
+                                icon: <SproutIcon />,
+                                text: 'Re-Use Seed',
+                                onClick: (id) => console.log('Re-Use Seed', id),
+                            },
+                            {
+                                type: 'item',
+                                icon: <AsteriskIcon />,
+                                text: 'Re-Use Everything',
+                                onClick: (id) => console.log('Re-Use Everything', id),
+                            },
+                            {
+                                type: 'separator',
+                            },
+                            {
+                                type: 'item',
+                                icon: <EllipsisVerticalIcon />,
+                                text: 'More Options...',
+                                onClick: (id) => console.log('More Options', id),
+                            },
+                            {
+                                type: 'submenu',
+                                icon: <ForwardIcon />,
+                                text: 'Send To...',
+                                items: [
+                                    {
+                                        type: 'item',
+                                        text: 'Input Image',
+                                        onClick: (id) => console.log('Input Image', id),
+                                    },
+                                    {
+                                        type: 'item',
+                                        text: 'Image Editor',
+                                        onClick: (id) => console.log('Image Editor', id),
+                                    },
+                                    {
+                                        type: 'item',
+                                        text: 'Board',
+                                        onClick: (id) => console.log('Board', id),
+                                    },
+                                ],
+                            },
+                            {
+                                type: 'separator',
+                            },
+                            {
+                                type: 'item',
+                                icon: <DownloadIcon />,
+                                text: 'Download',
+                                onClick: (id) => console.log('Download', id),
+                            },
+                            {
+                                type: 'separator',
+                            },
+                            {
+                                type: 'item',
+                                icon: <TrashIcon />,
+                                text: 'Delete',
+                                onClick: (id) => console.log('Delete', id),
+                            },
+                        ]}
+                    />
+                </div>
+
+                <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full pb-2'>
+                    <header className='flex sticky items-center gap-2 top-0 z-20 bg-inherit py-2 flex-col w-full px-2'>
+                        <div className='flex w-full items-center space-x-2'>
+                            <div className='grid w-full grid-cols-2 gap-2'>
+                                <Button className='rounded-full h-10'>
+                                    <CloudDownloadIcon />
+                                    Download
+                                </Button>
+                                <Button className='rounded-full h-10' variant='destructive'>
+                                    <TrashIcon />
+                                    Delete
+                                </Button>
+                            </div>
+
+                            <Select>
+                                <SelectTrigger className='flex-grow'>
+                                    <SelectValue placeholder='Image Size' defaultValue={SCHEDULERS[0]} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value='small'>Small</SelectItem>
+                                    <SelectItem value='medium'>Medium</SelectItem>
+                                    <SelectItem value='large'>Large</SelectItem>
+                                    <SelectItem value='xl'>XL</SelectItem>
+                                </SelectContent>
+                            </Select>
                         </div>
-                    </GroupContainer>
-                    <GroupContainer title='Base Settings'>
-                        <ImageDimensions />
 
-                        <div className='flex space-x-2 items-center'>
-                            <div className='flex flex-col w-full space-y-1'>
-                                <Label htmlFor='steps'>Steps</Label>
-                                <Input id='steps' type='number' className='text-center' min={1} max={100} defaultValue={35} step={1} />
-                            </div>
-                            <div className='flex flex-col w-full space-y-1'>
-                                <Label htmlFor='cfgScale'>CFG Scale</Label>
-                                <Input id='cfgScale' type='number' className='text-center' min={1} max={20} defaultValue={7.5} step={0.1} />
-                            </div>
-                            <div className='flex flex-col w-full space-y-1'>
-                                <Label>Scheduler</Label>
-                                <Select>
-                                    <SelectTrigger className='flex-grow'>
-                                        <SelectValue placeholder='Scheduler' defaultValue={SCHEDULERS[0]} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {SCHEDULERS.map((scheduler, i) => (
-                                            <SelectItem key={i} value={scheduler}>
-                                                {scheduler}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                        <span className='text-2xl text-left w-full'>Boards:</span>
+                        <div className='w-full px-2'>
+                            <BoardSelector
+                                boards={[
+                                    {
+                                        id: 'd8d78175-757c-43e1-81ea-a1d9398d11f5',
+                                        name: 'Board 1',
+                                        thumbnail: 'https://picsum.photos/256/256',
+                                    },
+                                    {
+                                        id: '251d7ab8-6ab0-46f8-8629-8ec78a9e04dc',
+                                        name: 'Board 2',
+                                        thumbnail: 'https://picsum.photos/256/256',
+                                    },
+                                    {
+                                        id: 'cbdb4669-e1f3-4d3d-a47a-3a05c26db016',
+                                        name: 'Board 3',
+                                        thumbnail: 'https://picsum.photos/256/256',
+                                    },
+                                    {
+                                        id: '75f4ed77-b6a2-47f5-b772-e5a6fee1219b',
+                                        name: 'Board 4',
+                                        thumbnail: 'https://picsum.photos/256/256',
+                                    },
+                                    {
+                                        id: '9d0fe868-d153-4af8-a7ef-9a005da6ee8a',
+                                        name: 'Board 5',
+                                        thumbnail: 'https://picsum.photos/256/256',
+                                    },
+                                ]}
+                            />
                         </div>
+                    </header>
 
-                        <hr className='my-2' />
-
-                        <div className='grid grid-cols-[auto_5fr_4fr_auto] gap-2 items-center'>
-                            <Label htmlFor='seed'>Seed</Label>
-                            <Input id='seed' type='number' className='text-center' min={0} defaultValue={42} />
-                            <Button>
-                                <ShuffleIcon />
-                                Shuffle Seed
-                            </Button>
-                            <div className='flex justify-around space-x-2 items-center w-full'>
-                                <Switch id='lockSeed' />
-                                <Label htmlFor='lockSeed'>Lock</Label>
-                            </div>
-
-                            <Label htmlFor='subSeed'>Sub Seed</Label>
-                            <Input id='subSeed' type='number' className='text-center' min={0} defaultValue={7} />
-                            <Button>
-                                <ShuffleIcon /> Shuffle Seed
-                            </Button>
-                            <div className='flex justify-around space-x-2 items-center w-full'>
-                                <Switch id='lockSubSeed' />
-                                <Label htmlFor='lockSubSeed'>Lock</Label>
-                            </div>
-                        </div>
-                    </GroupContainer>
+                    <div className='grid grid-cols-4 gap-2 px-2 pt-2'>
+                        {[...Array(102).keys()].map((i, idx) => (
+                            <img
+                                key={idx}
+                                className='w-full aspect-square object-cover rounded transition-all duration-200 hover:scale-110 z-10'
+                                src={`https://picsum.photos/1024/768`}
+                                alt='random'
+                            />
+                        ))}
+                    </div>
                 </div>
             </div>
-
-            <div className='flex items-center justify-around flex-col px-36 w-1/2'>
-                <ImageGrid
-                    images={outputImages}
-                    contextMenu={[
-                        {
-                            type: 'item',
-                            icon: <TypeIcon />,
-                            text: 'Re-Use Prompt',
-                            onClick: (id) => console.log('Re-Use Prompt', id),
-                        },
-                        {
-                            type: 'item',
-                            icon: <SproutIcon />,
-                            text: 'Re-Use Seed',
-                            onClick: (id) => console.log('Re-Use Seed', id),
-                        },
-                        {
-                            type: 'item',
-                            icon: <AsteriskIcon />,
-                            text: 'Re-Use Everything',
-                            onClick: (id) => console.log('Re-Use Everything', id),
-                        },
-                        {
-                            type: 'separator',
-                        },
-                        {
-                            type: 'item',
-                            icon: <EllipsisVerticalIcon />,
-                            text: 'More Options...',
-                            onClick: (id) => console.log('More Options', id),
-                        },
-                        {
-                            type: 'submenu',
-                            icon: <ForwardIcon />,
-                            text: 'Send To...',
-                            items: [
-                                {
-                                    type: 'item',
-                                    text: 'Input Image',
-                                    onClick: (id) => console.log('Input Image', id),
-                                },
-                                {
-                                    type: 'item',
-                                    text: 'Image Editor',
-                                    onClick: (id) => console.log('Image Editor', id),
-                                },
-                                {
-                                    type: 'item',
-                                    text: 'Board',
-                                    onClick: (id) => console.log('Board', id),
-                                },
-                            ],
-                        },
-                        {
-                            type: 'separator',
-                        },
-                        {
-                            type: 'item',
-                            icon: <DownloadIcon />,
-                            text: 'Download',
-                            onClick: (id) => console.log('Download', id),
-                        },
-                        {
-                            type: 'separator',
-                        },
-                        {
-                            type: 'item',
-                            icon: <TrashIcon />,
-                            text: 'Delete',
-                            onClick: (id) => console.log('Delete', id),
-                        },
-                    ]}
-                />
-            </div>
-
-            <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full pb-2'>
-                <header className='flex sticky items-center gap-2 top-0 z-20 bg-inherit py-2 flex-col w-full px-2'>
-                    <div className='flex w-full items-center space-x-2'>
-                        <div className='grid w-full grid-cols-2 gap-2'>
-                            <Button className='rounded-full h-10'>
-                                <CloudDownloadIcon />
-                                Download
-                            </Button>
-                            <Button className='rounded-full h-10' variant='destructive'>
-                                <TrashIcon />
-                                Delete
-                            </Button>
-                        </div>
-
-                        <Select>
-                            <SelectTrigger className='flex-grow'>
-                                <SelectValue placeholder='Image Size' defaultValue={SCHEDULERS[0]} />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value='small'>Small</SelectItem>
-                                <SelectItem value='medium'>Medium</SelectItem>
-                                <SelectItem value='large'>Large</SelectItem>
-                                <SelectItem value='xl'>XL</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    <span className='text-2xl text-left w-full'>Boards:</span>
-                    <div className='w-full px-2'>
-                        <BoardSelector
-                            boards={[
-                                {
-                                    id: 'd8d78175-757c-43e1-81ea-a1d9398d11f5',
-                                    name: 'Board 1',
-                                    thumbnail: 'https://picsum.photos/256/256',
-                                },
-                                {
-                                    id: '251d7ab8-6ab0-46f8-8629-8ec78a9e04dc',
-                                    name: 'Board 2',
-                                    thumbnail: 'https://picsum.photos/256/256',
-                                },
-                                {
-                                    id: 'cbdb4669-e1f3-4d3d-a47a-3a05c26db016',
-                                    name: 'Board 3',
-                                    thumbnail: 'https://picsum.photos/256/256',
-                                },
-                                {
-                                    id: '75f4ed77-b6a2-47f5-b772-e5a6fee1219b',
-                                    name: 'Board 4',
-                                    thumbnail: 'https://picsum.photos/256/256',
-                                },
-                                {
-                                    id: '9d0fe868-d153-4af8-a7ef-9a005da6ee8a',
-                                    name: 'Board 5',
-                                    thumbnail: 'https://picsum.photos/256/256',
-                                },
-                            ]}
-                        />
-                    </div>
-                </header>
-
-                <div className='grid grid-cols-4 gap-2 px-2 pt-2'>
-                    {[...Array(102).keys()].map((i, idx) => (
-                        <img
-                            key={idx}
-                            className='w-full aspect-square object-cover rounded transition-all duration-200 hover:scale-110 z-10'
-                            src={`https://picsum.photos/1024/768`}
-                            alt='random'
-                        />
-                    ))}
-                </div>
-            </div>
-        </div>
+        </>
     )
 }
