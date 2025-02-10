@@ -292,12 +292,19 @@ const ImageGrid: React.FC<ImageGridProps> = ({ images, contextMenu }) => {
                     <XIcon size={32} />
                 </button>
                 <div className='relative z-10 max-w-screen-xl max-h-screen p-4'>
-                    <img
-                        src={images[selectedImage]}
-                        alt={`Generated Image ${selectedImage + 1}`}
-                        className='max-w-full max-h-[90vh] object-contain'
-                        onClick={(e) => e.stopPropagation()}
-                    />
+                    <ContextMenu>
+                        <ContextMenuTrigger>
+                            <img
+                                src={images[selectedImage]}
+                                alt={`Generated Image ${selectedImage + 1}`}
+                                className='max-w-full max-h-[90vh] object-contain'
+                                onClick={(e) => e.stopPropagation()}
+                            />
+                        </ContextMenuTrigger>
+                        <ContextMenuContent>
+                            {contextMenu.map((item, idx) => createContextItem(item, selectedImage, idx))}
+                        </ContextMenuContent>
+                    </ContextMenu>
                 </div>
             </div>
         )
@@ -648,8 +655,8 @@ export default function PageTxt2Img() {
                 />
             </div>
 
-            <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full px-2 pb-2'>
-                <header className='flex sticky items-center gap-2 top-0 z-10 bg-inherit py-2 flex-col'>
+            <div className='bg-background3 rounded-md flex flex-col w-1/4 overflow-y-scroll h-full pb-2'>
+                <header className='flex sticky items-center gap-2 top-0 z-20 bg-inherit py-2 flex-col w-full px-2'>
                     <div className='flex w-full items-center space-x-2'>
                         <div className='grid w-full grid-cols-2 gap-2'>
                             <Button className='rounded-full h-10'>
@@ -709,7 +716,7 @@ export default function PageTxt2Img() {
                     </div>
                 </header>
 
-                <div className='grid grid-cols-4 gap-2'>
+                <div className='grid grid-cols-4 gap-2 px-2 pt-2'>
                     {[...Array(102).keys()].map((i, idx) => (
                         <img
                             key={idx}
